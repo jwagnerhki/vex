@@ -110,7 +110,7 @@ class Entry:
         """Interprets a string line (such as a line in the vex file) and saves it as an Entry
         object
         """
-        if text.strip()[0] == '*':
+        if len(text.strip()) == 0 or text.strip()[0] == '*':
             # It is a comment line. Nothing additionally to do
             return Entry(EntryType.comment, key=None, value=text.strip()[1:])
 
@@ -589,7 +589,7 @@ class Vex:
             for vexline in vexlines:
                 currentline = vexline
                 # print(currentline)
-                if currentline.strip()[0] == '*':
+                if len(currentline.strip()) == 0 or currentline.strip()[0] == '*':
                     if current_definition is not None:
                         current_definition.add_entry(Entry.entry_from_text(currentline))
                     elif current_section is not None:
@@ -619,7 +619,7 @@ class Vex:
                         current_section = Section(currentline[1:currentline.index(';')])
                     elif currentline[:4] == 'def ':
                         if current_definition is not None:
-                            raise ValueError('A definition inside a definition is not supported')
+                            raise ValueError('A definition inside a definition is not supported. Offending line: ' + str(currentline))
 
                         current_definition = Definition(currentline[4:currentline.index(';')])
                     elif currentline[:6] == 'enddef':
